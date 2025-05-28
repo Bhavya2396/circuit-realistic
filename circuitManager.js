@@ -2,15 +2,19 @@ import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
 
 export default class CircuitManager {
-    constructor(bulbComponent, switchComponent) {
+    constructor(bulbComponent, switchComponent, electronManager) {
         this.bulbFilamentMaterial = bulbComponent.filamentMaterial;
         this.bulbLight = bulbComponent.bulbLight;
         this.switchLever = switchComponent.lever;
+        this.electronManager = electronManager;
         this.isCircuitOn = false;
         this.switchOpenAngle = Math.PI / 3; // Approx 60 degrees
         this.switchClosedAngle = 0.05; // Slightly off horizontal to seat in contact
         this.switchLever.rotation.x = this.switchOpenAngle; // Initial state: open
         this.updateBulb();
+        if (this.electronManager) {
+            this.electronManager.updateFlowState(this.isCircuitOn);
+        }
     }
 
     toggleSwitch() {
@@ -23,6 +27,9 @@ export default class CircuitManager {
             .start();
 
         this.updateBulb();
+        if (this.electronManager) {
+            this.electronManager.updateFlowState(this.isCircuitOn);
+        }
     }
 
     updateBulb() {
